@@ -1,0 +1,36 @@
+.gradle/
+.idea/
+*.iml
+local.properties
+
+# Build and output
+/build/
+captures/
+*.apk
+output.json
+*.log
+*.hprof
+
+# External builds
+.externalNativeBuild/
+.cxx/
+
+# OS & Misc
+.DS_Store
+
+# Gradle
+gradle.properties
+gradlew
+gradlew.bat
+
+# IntelliJ
+misc.xml
+deploymentTargetDropDown.xml
+render.experimental.xml
+
+# Keystore
+*.jks
+*.keystore
+
+# Google services
+google-services.json
