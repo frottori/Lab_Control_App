@@ -17,7 +17,8 @@ public class TcpClient {
             StringBuilder responseBuilder = new StringBuilder();
             String line;
             while ((line = in.readLine()) != null) {
-                if (line.equals("END")) break;
+                if (line.equals("END"))
+                    break;
                 responseBuilder.append(line).append("\n");
                 responseTextView.setText(responseBuilder.toString());
             }
