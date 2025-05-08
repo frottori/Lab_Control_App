@@ -42,7 +42,7 @@ public class Server {
                         break;
                     case "Restore":
                         out.println(hostName + " - Restoring...");
-                        Thread.sleep(10000); // sleeps for 60 seconds 
+                        Thread.sleep(60000); // sleeps for 60 seconds 
                         out.println(hostName + " - Restored");
                         break;
                     default:
