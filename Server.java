@@ -42,13 +42,14 @@ public class Server {
                         break;
                     case "Restore":
                         out.println(hostName + " - Restoring...");
-                        Thread.sleep(10); // Simulate a delay for restoring
+                        Thread.sleep(10000); // sleeps for 60 seconds 
                         out.println(hostName + " - Restored");
                         break;
                     default:
                         out.println("Unknown command: " + command);
                         break;
                 }
+                out.println("END"); // END Of MESSAGE
             }
         } catch (IOException | InterruptedException e) {
             System.out.println("Error:" + e.getMessage());

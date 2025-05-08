@@ -59,11 +59,7 @@ public class MainActivity extends AppCompatActivity {
             if (checkedItems.valueAt(i)) {
                 String host = computers[position];
                 new Thread(() -> {
-                    String response = TcpClient.sendCommandTo(host, 41007, command);
-                    runOnUiThread(() -> {
-                        responses.append(command).append(": ").append(response).append("\n");
-                        responseTextView.setText(responses.toString());
-                    });
+                   TcpClient.sendCommandTo(host, 41007, command, responseTextView);
                 }).start();
             }
         }
