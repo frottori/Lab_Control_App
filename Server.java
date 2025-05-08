@@ -41,10 +41,10 @@ public class Server {
                         out.println(hostName + " - Shutting down...");
                         break;
                     case "Restore":
-                        out.println(hostName + " - Restoring...");
-                        Thread.sleep(60000); // sleeps for 60 seconds 
-                        out.println(hostName + " - Restored");
-                        break;
+                            out.println(hostName + " - Restoring...");
+                            Thread.sleep(10000); // simulate the delay of restoration
+                            out.println(hostName + " - Restored");
+                            break;
                     default:
                         out.println("Unknown command: " + command);
                         break;

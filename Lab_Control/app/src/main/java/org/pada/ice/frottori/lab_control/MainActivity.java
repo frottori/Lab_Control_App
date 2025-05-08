@@ -7,9 +7,10 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.util.SparseBooleanArray;
-
+import java.util.Locale;
 import androidx.appcompat.app.AppCompatActivity;
-
+import android.view.View;
+import androidx.core.widget.NestedScrollView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,11 +32,11 @@ public class MainActivity extends AppCompatActivity {
         sendButton = findViewById(R.id.sendCommandButton);
         responseTextView = findViewById(R.id.responseTextView);
 
-        computers[0] = "192.168.68.111"; // Put you local IP/hostname here to test
         // Populate the computers array with PRPC01 to PRPC27
-        for (int i = 1; i < 28; i++) {
-            computers[i] = String.format("PRPC%02d", i + 1);
+        for (int i = 0; i < 27; i++) {
+            computers[i] = String.format(Locale.US, "PRPC%02d", i + 1);
         }
+        computers[27] = "192.168.68.111"; // Put you local IP/hostname here to test
 
         // Set up the spinners and list view
         ArrayAdapter<String> commandAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, commands);
@@ -52,14 +53,24 @@ public class MainActivity extends AppCompatActivity {
     private void sendCommandsToSelected() {
         String command = commandSpinner.getSelectedItem().toString(); // Get the selected command from the spinner
         SparseBooleanArray checkedItems = computerListView.getCheckedItemPositions(); // Get the selected items from the list view
-        StringBuilder responses = new StringBuilder(); // Store the responses
+        responseTextView.append(command + ":\n");
 
         for (int i = 0; i < checkedItems.size(); i++) {
-            int position = checkedItems.keyAt(i);
+            int index = checkedItems.keyAt(i);
             if (checkedItems.valueAt(i)) {
-                String host = computers[position];
+                String host = computers[index];
+                // Send the command to the selected computer using a separate thread
                 new Thread(() -> {
-                   TcpClient.sendCommandTo(host, 41007, command, responseTextView);
+                    String response = TcpClient.sendCommandTo(host, 41007, command);
+                    runOnUiThread(() -> {
+                        responseTextView.append(response + "\n");
+
+                        // Auto-scroll to the bottom after updating the TextView
+                        responseTextView.post(() -> {
+                            NestedScrollView nestedScrollView = findViewById(R.id.nestedScrollView);
+                            nestedScrollView.fullScroll(View.FOCUS_DOWN);
+                        });
+                    });
                 }).start();
             }
         }
