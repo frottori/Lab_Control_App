@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         sendButton = findViewById(R.id.sendCommandButton);
         responseTextView = findViewById(R.id.responseTextView);
 
-        computers[0] = "Frossos-MacBook-Air.local"; // Put you local IP/hostname here to test
+        computers[0] = "192.168.68.111"; // Put you local IP/hostname here to test
         // Populate the computers array with PRPC01 to PRPC27
         for (int i = 1; i < 28; i++) {
             computers[i] = String.format("PRPC%02d", i + 1);
