@@ -1,24 +1,73 @@
 package org.pada.ice.frottori.lab_control;
 
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.util.SparseBooleanArray;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+
 
 public class MainActivity extends AppCompatActivity {
+
+    Spinner commandSpinner;
+    ListView computerListView;
+    Button sendButton;
+    TextView responseTextView;
+
+    String[] commands = {"Echo", "Restart", "Shutdown", "Restore"};
+    String[] computers = new String[28];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+
+        commandSpinner = findViewById(R.id.commandSpinner);
+        computerListView = findViewById(R.id.computerListView);
+        sendButton = findViewById(R.id.sendCommandButton);
+        responseTextView = findViewById(R.id.responseTextView);
+
+        computers[0] = "Frossos-MacBook-Air.local"; // put you local ip here to test
+        // Populate the computers array with PRPC01 to PRPC27
+        for (int i = 1; i < 28; i++) {
+            computers[i] = String.format("PRPC%02d", i + 1);
+        }
+
+
+
+        // Set up the spinners and list view
+        ArrayAdapter<String> commandAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, commands);
+        commandSpinner.setAdapter(commandAdapter);
+
+        // Set up the list view with the computers array
+        ArrayAdapter<String> computerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, computers);
+        computerListView.setAdapter(computerAdapter);
+
+        // Set up the send button click listener
+        sendButton.setOnClickListener(v -> sendCommandsToSelected());
+    }
+
+    private void sendCommandsToSelected() {
+        String command = commandSpinner.getSelectedItem().toString(); // Get the selected command from the spinner
+        SparseBooleanArray checkedItems = computerListView.getCheckedItemPositions(); // Get the selected items from the list view
+        StringBuilder responses = new StringBuilder(); // Store the responses
+
+        for (int i = 0; i < checkedItems.size(); i++) {
+            int position = checkedItems.keyAt(i);
+            if (checkedItems.valueAt(i)) {
+                String host = computers[position];
+                new Thread(() -> {
+                    String response = TcpClient.sendCommandTo(host, 41007, command);
+                    runOnUiThread(() -> {
+                        responses.append(host).append(": ").append(response).append("\n");
+                        responseTextView.setText(responses.toString());
+                    });
+                }).start();
+            }
+        }
     }
 }
