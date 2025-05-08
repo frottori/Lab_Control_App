@@ -31,13 +31,11 @@ public class MainActivity extends AppCompatActivity {
         sendButton = findViewById(R.id.sendCommandButton);
         responseTextView = findViewById(R.id.responseTextView);
 
-        computers[0] = "Frossos-MacBook-Air.local"; // put you local ip here to test
+        computers[0] = "Frossos-MacBook-Air.local"; // Put you local IP/hostname here to test
         // Populate the computers array with PRPC01 to PRPC27
         for (int i = 1; i < 28; i++) {
             computers[i] = String.format("PRPC%02d", i + 1);
         }
-
-
 
         // Set up the spinners and list view
         ArrayAdapter<String> commandAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, commands);
@@ -63,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
                 new Thread(() -> {
                     String response = TcpClient.sendCommandTo(host, 41007, command);
                     runOnUiThread(() -> {
-                        responses.append(host).append(": ").append(response).append("\n");
+                        responses.append(command).append(": ").append(response).append("\n");
                         responseTextView.setText(responses.toString());
                     });
                 }).start();
