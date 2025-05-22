@@ -45,6 +45,9 @@ public class Server {
                             Thread.sleep(10000); // simulate the delay of restoration
                             out.println(hostName + " - Restored");
                             break;
+                    case "get_os":
+                            out.println(osName); // <- respond only with OS name
+                            break;
                     default:
                         out.println("Unknown command: " + command);
                         break;
