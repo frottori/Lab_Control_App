@@ -24,6 +24,8 @@ public class MainActivity extends AppCompatActivity {
 
     String[] commands = {"Echo", "Restart", "Shutdown", "Restore"};
     String[] computers = new String[28];
+    Boolean[] active_comp = new Boolean[28];
+    String[]  os_of_active = new String[28];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,11 +38,12 @@ public class MainActivity extends AppCompatActivity {
         checkStatusButton = findViewById(R.id.btnCheckStatus);
         responseTextView = findViewById(R.id.responseTextView);
 
+
         // Populate the computers array with PRPC01 to PRPC27
         for (int i = 0; i < 27; i++) {
             computers[i] = String.format(Locale.US, "PRPC%02d", i + 1);
         }
-        computers[27] = "192.168.68.111"; // Put you local IP/hostname here to test
+        computers[27] = "192.168.10.18"; // Put you local IP/hostname here to test
 
         // Set up the spinners and list view
         ArrayAdapter<String> commandAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, commands);
@@ -86,18 +89,22 @@ public class MainActivity extends AppCompatActivity {
         responseTextView.append("Scanning for online computers...\n");
 
         ExecutorService executor = Executors.newFixedThreadPool(10);
+        for (int i = 0; i < computers.length; i++) {
+            final int index = i;  // make a final copy for the lambda
+            String host = computers[index];
 
-        for (String host : computers) {
             executor.execute(() -> {
                 String response = TcpClient.sendCommandTo(host, 41007, "get_os");
 
                 runOnUiThread(() -> {
                     if (response != null && !response.toLowerCase().contains("error")) {
                         responseTextView.append(host + " is ONLINE, OS: " + response + "\n");
+                        active_comp[index] = true;
+                        os_of_active[index] = response;
                     } else {
-                        responseTextView.append(host + " is OFFLINE\n");
+                        active_comp[index] = false;
+                        responseTextView.append(host + " is OFFLINE\n" + " " + active_comp[index] + "\n");
                     }
-
                     // Scroll to bottom
                     responseTextView.post(() -> {
                         NestedScrollView nestedScrollView = findViewById(R.id.nestedScrollView);
@@ -105,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
                     });
                 });
             });
+
         }
 
         executor.shutdown();

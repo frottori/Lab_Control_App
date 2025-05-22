@@ -22,6 +22,7 @@ public class Server {
             }
         } catch (IOException e) {
             System.out.println("Error: " + e.getMessage());
+            
         }
     }
 
