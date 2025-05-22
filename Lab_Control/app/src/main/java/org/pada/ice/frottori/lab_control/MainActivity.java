@@ -11,13 +11,16 @@ import java.util.Locale;
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import androidx.core.widget.NestedScrollView;
-
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 public class MainActivity extends AppCompatActivity {
 
     Spinner commandSpinner;
     ListView computerListView;
     Button sendButton;
     TextView responseTextView;
+
+    Button checkStatusButton;
 
     String[] commands = {"Echo", "Restart", "Shutdown", "Restore"};
     String[] computers = new String[28];
@@ -30,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         commandSpinner = findViewById(R.id.commandSpinner);
         computerListView = findViewById(R.id.computerListView);
         sendButton = findViewById(R.id.sendCommandButton);
+        checkStatusButton = findViewById(R.id.btnCheckStatus);
         responseTextView = findViewById(R.id.responseTextView);
 
         // Populate the computers array with PRPC01 to PRPC27
@@ -48,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Set up the send button click listener
         sendButton.setOnClickListener(v -> sendCommandsToSelected());
+
+        // Button to check online PCs and their OS
+        checkStatusButton.setOnClickListener(v -> scanAndShowOnlineComputers());
     }
 
     private void sendCommandsToSelected() {
@@ -74,5 +81,32 @@ public class MainActivity extends AppCompatActivity {
                 }).start();
             }
         }
+    }
+    private void scanAndShowOnlineComputers() {
+        responseTextView.append("Scanning for online computers...\n");
+
+        ExecutorService executor = Executors.newFixedThreadPool(10);
+
+        for (String host : computers) {
+            executor.execute(() -> {
+                String response = TcpClient.sendCommandTo(host, 41007, "get_os");
+
+                runOnUiThread(() -> {
+                    if (response != null && !response.toLowerCase().contains("error")) {
+                        responseTextView.append(host + " is ONLINE, OS: " + response + "\n");
+                    } else {
+                        responseTextView.append(host + " is OFFLINE\n");
+                    }
+
+                    // Scroll to bottom
+                    responseTextView.post(() -> {
+                        NestedScrollView nestedScrollView = findViewById(R.id.nestedScrollView);
+                        nestedScrollView.fullScroll(View.FOCUS_DOWN);
+                    });
+                });
+            });
+        }
+
+        executor.shutdown();
     }
 }
