@@ -42,33 +42,33 @@ public class Server {
                         break;
                     case "Restart":
                         out.println(hostName + " - Rebooting...");
-                        if (osName.toLowerCase().contains("windows")) {
-                            Runtime.getRuntime().exec("shutdown -r -t 0");
-                        } else {
-                             Runtime.getRuntime().exec("reboot");
-                        }
+                        // if (osName.toLowerCase().contains("windows")) {
+                        //     Runtime.getRuntime().exec("shutdown -r -t 0");
+                        // } else {
+                        //     Runtime.getRuntime().exec("reboot");
+                        // }
                         break;
                     case "Shutdown":
                         out.println(hostName + " - Shutting down...");
-                        if (osName.toLowerCase().contains("windows")) {
-                            Runtime.getRuntime().exec("shutdown -s -t 0");} 
-                        else {
-                            Runtime.getRuntime().exec("shutdown -h now");
-                        }
+                        // if (osName.toLowerCase().contains("windows")) {
+                        //     Runtime.getRuntime().exec("shutdown -s -t 0");} 
+                        // else {
+                        //     Runtime.getRuntime().exec("shutdown -h now");
+                        // }
                         break;
                     case "Restore":
                             out.println(hostName + " - Restoring...");
                             Thread.sleep(10000); // simulate the delay of restoration
                             out.println(hostName + " - Restored");
                             break;
-                    case "get_os":
-                            out.println(osName); // <- respond only with OS name
+                    case "Check Online PCs":
+                            out.println(osName);
                             break;
                     default:
                         out.println("Unknown command: " + command);
                         break;
                 }
-                out.println("END"); // END Of MESSAGE
+                out.println("END"); // END OF MESSAGE
             }
         } catch (IOException | InterruptedException e) {
             System.out.println("Error:" + e.getMessage());
