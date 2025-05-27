@@ -42,9 +42,19 @@ public class Server {
                         break;
                     case "Restart":
                         out.println(hostName + " - Rebooting...");
+                        if (osName.toLowerCase().contains("windows")) {
+                            Runtime.getRuntime().exec("shutdown -r -t 0");
+                        } else {
+                             Runtime.getRuntime().exec("reboot");
+                        }
                         break;
                     case "Shutdown":
                         out.println(hostName + " - Shutting down...");
+                        if (osName.toLowerCase().contains("windows")) {
+                            Runtime.getRuntime().exec("shutdown -s -t 0");} 
+                        else {
+                            Runtime.getRuntime().exec("shutdown -h now");
+                        }
                         break;
                     case "Restore":
                             out.println(hostName + " - Restoring...");
