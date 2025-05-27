@@ -43,6 +43,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/computerListView" />
 
+    <Button
+        android:id="@+id/WOLButton"
+        android:layout_width="173dp"
+        android:layout_height="54dp"
+        android:layout_marginTop="16dp"
+        android:text="WOL"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.941"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/computerListView" />
+
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nestedScrollView"
         android:layout_width="332dp"
@@ -61,18 +73,4 @@
             android:scrollbars="vertical" />
 
     </androidx.core.widget.NestedScrollView>
-
-    <Button
-        android:id="@+id/btnCheckStatus"
-        android:layout_width="173dp"
-        android:layout_height="54dp"
-        android:layout_marginTop="16dp"
-        android:text="Check Online PCs"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.941"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/computerListView" />
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

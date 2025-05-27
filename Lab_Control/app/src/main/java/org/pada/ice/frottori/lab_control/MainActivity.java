@@ -11,39 +11,36 @@ import java.util.Locale;
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import androidx.core.widget.NestedScrollView;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+
 public class MainActivity extends AppCompatActivity {
 
     Spinner commandSpinner;
     ListView computerListView;
-    Button sendButton;
+    Button sendButton, wolButton;
     TextView responseTextView;
-
-    Button checkStatusButton;
-
-    String[] commands = {"Echo", "Restart", "Shutdown", "Restore"};
+    String[] commands = {"Echo", "Restart", "Shutdown", "Restore", "Check Online PCs"};
     String[] computers = new String[28];
-    Boolean[] active_comp = new Boolean[28];
-    String[]  os_of_active = new String[28];
+    Boolean[] online_comp = new Boolean[28];
+    String[]  os_comp = new String[28];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Set the content view to the layout file
         setContentView(R.layout.activity_main);
 
+        // Initialize the UI components
         commandSpinner = findViewById(R.id.commandSpinner);
         computerListView = findViewById(R.id.computerListView);
         sendButton = findViewById(R.id.sendCommandButton);
-        checkStatusButton = findViewById(R.id.btnCheckStatus);
+        wolButton = findViewById(R.id.WOLButton);
         responseTextView = findViewById(R.id.responseTextView);
-
 
         // Populate the computers array with PRPC01 to PRPC27
         for (int i = 0; i < 27; i++) {
             computers[i] = String.format(Locale.US, "PRPC%02d", i + 1);
         }
-        computers[27] = "192.168.10.18"; // Put you local IP/hostname here to test
+        computers[27] = "192.168.68.107"; // Put you local IP/hostname here to test
 
         // Set up the spinners and list view
         ArrayAdapter<String> commandAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, commands);
@@ -54,26 +51,43 @@ public class MainActivity extends AppCompatActivity {
         computerListView.setAdapter(computerAdapter);
 
         // Set up the send button click listener
-        sendButton.setOnClickListener(v -> sendCommandsToSelected());
+        sendButton.setOnClickListener(v -> sendCommand());
 
-        // Button to check online PCs and their OS
-        checkStatusButton.setOnClickListener(v -> scanAndShowOnlineComputers());
+        // Set up the WOL button click listener
+        wolButton.setOnClickListener(v -> sendWOL());
     }
 
-    private void sendCommandsToSelected() {
-        String command = commandSpinner.getSelectedItem().toString(); // Get the selected command from the spinner
-        SparseBooleanArray checkedItems = computerListView.getCheckedItemPositions(); // Get the selected items from the list view
+    private void sendCommand() {
+        // Get the selected command from the spinner
+        String command = commandSpinner.getSelectedItem().toString();
+        // Get the selected items from the list view
+        SparseBooleanArray checkedItems = computerListView.getCheckedItemPositions();
+        // Print the select command
         responseTextView.append(command + ":\n");
 
         for (int i = 0; i < checkedItems.size(); i++) {
-            int index = checkedItems.keyAt(i);
+            int index = checkedItems.keyAt(i); // Get the index of the checked item
             if (checkedItems.valueAt(i)) {
-                String host = computers[index];
+                String host = computers[index]; // Get the host name of the selected computer
                 // Send the command to the selected computer using a separate thread
                 new Thread(() -> {
-                    String response = TcpClient.sendCommandTo(host, 41007, command);
+                    String response = TcpClient.sendCommand(host, 41007, command); // send
                     runOnUiThread(() -> {
-                        responseTextView.append(response + "\n");
+
+                        if (command.equals("Check Online PCs")) {
+                            if (response != null && !response.toLowerCase().contains("error")) {
+                                os_comp[index] = response.trim();
+                                online_comp[index] = true;      // Mark as active
+                                responseTextView.append(host + " - " + os_comp[index] + " is ONLINE\n");
+                            } else {
+                                os_comp[index] = "unknown"; // Store osName
+                                online_comp[index] = false; // Mark as inactive
+                                responseTextView.append(host + " - " + os_comp[index] + " is OFFLINE\n");
+                            }
+                        }
+                        else {
+                            responseTextView.append(response + "\n");
+                        }
 
                         // Auto-scroll to the bottom after updating the TextView
                         responseTextView.post(() -> {
@@ -85,36 +99,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    private void scanAndShowOnlineComputers() {
-        responseTextView.append("Scanning for online computers...\n");
 
-        ExecutorService executor = Executors.newFixedThreadPool(10);
-        for (int i = 0; i < computers.length; i++) {
-            final int index = i;  // make a final copy for the lambda
-            String host = computers[index];
-
-            executor.execute(() -> {
-                String response = TcpClient.sendCommandTo(host, 41007, "get_os");
-
-                runOnUiThread(() -> {
-                    if (response != null && !response.toLowerCase().contains("error")) {
-                        responseTextView.append(host + " is ONLINE, OS: " + response + "\n");
-                        active_comp[index] = true;
-                        os_of_active[index] = response;
-                    } else {
-                        active_comp[index] = false;
-                        responseTextView.append(host + " is OFFLINE\n" + " " + active_comp[index] + "\n");
-                    }
-                    // Scroll to bottom
-                    responseTextView.post(() -> {
-                        NestedScrollView nestedScrollView = findViewById(R.id.nestedScrollView);
-                        nestedScrollView.fullScroll(View.FOCUS_DOWN);
-                    });
-                });
-            });
-
-        }
-
-        executor.shutdown();
+    private void sendWOL(){
+        
     }
 }
