@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(() -> {
 
                         if (command.equals("Check Online PCs")) {
-                            if (response != null && !response.toLowerCase().contains("error")) {
+                            if (!response.toLowerCase().contains("error")) {
                                 os_comp[index] = response.trim();
                                 online_comp[index] = true;      // Mark as active
                                 responseTextView.append(host + " - " + os_comp[index] + " is ONLINE\n");
