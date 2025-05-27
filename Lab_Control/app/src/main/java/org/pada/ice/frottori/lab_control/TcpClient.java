@@ -7,7 +7,7 @@ import java.net.Socket;
 import android.widget.TextView;
 
 public class TcpClient {
-    public static String sendCommandTo(String host, int port, String command) {
+    public static String sendCommand(String host, int port, String command) {
         try (Socket socket = new Socket(host, port);
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
