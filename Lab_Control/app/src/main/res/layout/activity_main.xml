@@ -8,20 +8,21 @@
     android:padding="16dp"
     tools:context=".MainActivity">
 
+
     <Spinner
         android:id="@+id/commandSpinner"
-        android:layout_width="336dp"
+        android:layout_width="333dp"
         android:layout_height="48dp"
         android:minHeight="48dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.489"
+        app:layout_constraintHorizontal_bias="0.652"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ListView
         android:id="@+id/computerListView"
-        android:layout_width="332dp"
-        android:layout_height="389dp"
+        android:layout_width="318dp"
+        android:layout_height="386dp"
         android:choiceMode="multipleChoice"
         app:layout_constraintBottom_toTopOf="@+id/sendCommandButton"
         app:layout_constraintEnd_toEndOf="parent"
@@ -32,38 +33,38 @@
 
     <Button
         android:id="@+id/sendCommandButton"
-        android:layout_width="173dp"
+        android:layout_width="150dp"
         android:layout_height="54dp"
         android:layout_marginTop="16dp"
         android:maxWidth="320dp"
         android:text="Send Command"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.048"
+        app:layout_constraintHorizontal_bias="0.131"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/computerListView" />
 
     <Button
         android:id="@+id/WOLButton"
-        android:layout_width="173dp"
+        android:layout_width="150dp"
         android:layout_height="54dp"
         android:layout_marginTop="16dp"
         android:text="WOL"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.941"
+        app:layout_constraintHorizontal_bias="0.864"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/computerListView" />
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nestedScrollView"
-        android:layout_width="332dp"
-        android:layout_height="179dp"
-        android:layout_marginTop="16dp"
+        android:layout_width="316dp"
+        android:layout_height="183dp"
+        android:layout_marginTop="84dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.489"
+        app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sendCommandButton">
+        app:layout_constraintTop_toBottomOf="@+id/computerListView">
 
         <TextView
             android:id="@+id/responseTextView"
