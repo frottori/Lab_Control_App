@@ -22,25 +22,26 @@
     <ListView
         android:id="@+id/computerListView"
         android:layout_width="318dp"
-        android:layout_height="386dp"
+        android:layout_height="324dp"
         android:choiceMode="multipleChoice"
         app:layout_constraintBottom_toTopOf="@+id/sendCommandButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.5"
-        app:layout_constraintHorizontal_bias="0.489"
+        app:layout_constraintHorizontal_bias="0.524"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/commandSpinner" />
+        app:layout_constraintTop_toBottomOf="@+id/commandSpinner"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/sendCommandButton"
         android:layout_width="138dp"
         android:layout_height="52dp"
-        android:layout_marginTop="448dp"
+        android:layout_marginTop="380dp"
         android:maxWidth="320dp"
-        android:text="Send Command"
+        android:text="Send Server"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.124"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -48,21 +49,33 @@
         android:id="@+id/WOLButton"
         android:layout_width="138dp"
         android:layout_height="53dp"
-        android:layout_marginTop="448dp"
+        android:layout_marginTop="612dp"
         android:text="WOL"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.871"
+        app:layout_constraintHorizontal_bias="0.132"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/CheckOnline"
+        android:layout_width="138dp"
+        android:layout_height="53dp"
+        android:layout_marginTop="612dp"
+        android:text="Check Online"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.896"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nestedScrollView"
-        android:layout_width="322dp"
-        android:layout_height="150dp"
+        android:layout_width="320dp"
+        android:layout_height="161dp"
         android:layout_marginTop="68dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintHorizontal_bias="0.561"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/computerListView">
 
@@ -72,6 +85,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="5dp"
             android:scrollbars="vertical" />
+
 
     </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

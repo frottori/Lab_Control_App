@@ -30,39 +30,26 @@ public class Server {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
              PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true)) {
 
-            String command; // Command received from the client
-            String osName = System.getProperty("os.name"); // Get the OS name
+            String command;                                             // Command received from the client
+            String osName = System.getProperty("os.name");          // Get the OS name
             String hostName = InetAddress.getLocalHost().getHostName(); // Get the hostname of the PC
 
             while ((command = in.readLine()) != null) {
                 System.out.println("Received command: " + command);
                 switch (command) {
                     case "Echo":
-                        out.println(hostName + " - " + osName);  // Send hostname and OS name
+                        out.println(hostName + " - " + osName); 
                         break;
                     case "Restart":
                         out.println(hostName + " - Rebooting...");
-                        // if (osName.toLowerCase().contains("windows")) {
-                        //     Runtime.getRuntime().exec("shutdown -r -t 0");
-                        // } else {
-                        //     Runtime.getRuntime().exec("reboot");
-                        // }
                         break;
                     case "Shutdown":
                         out.println(hostName + " - Shutting down...");
-                        // if (osName.toLowerCase().contains("windows")) {
-                        //     Runtime.getRuntime().exec("shutdown -s -t 0");} 
-                        // else {
-                        //     Runtime.getRuntime().exec("shutdown -h now");
-                        // }
                         break;
                     case "Restore":
                             out.println(hostName + " - Restoring...");
-                            Thread.sleep(10000); // simulate the delay of restoration
+                            Thread.sleep(10000); // simulate delay of 60 seconds
                             out.println(hostName + " - Restored");
-                            break;
-                    case "Check Online PCs":
-                            out.println(osName);
                             break;
                     default:
                         out.println("Unknown command: " + command);

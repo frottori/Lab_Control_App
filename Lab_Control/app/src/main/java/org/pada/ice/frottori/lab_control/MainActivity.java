@@ -16,48 +16,53 @@ public class MainActivity extends AppCompatActivity {
 
     Spinner commandSpinner;
     ListView computerListView;
-    Button sendButton, wolButton;
+    Button sendButton, wolButton, checkOnlineButton;
     TextView responseTextView;
-    String[] commands = {"Echo", "Restart", "Shutdown", "Restore", "Check Online PCs"};
+    String[] commands = {"Echo", "Restart", "Shutdown", "Restore"};
     String[] computers = new String[28];
-    Boolean[] online_comp = new Boolean[28]; // Array to track online status of computers
-    String[]  os_comp = new String[28];      // Array to store OS names of computers
+    Boolean[] online_comp = new Boolean[28]; 
+    String[]  os_comp = new String[28];    
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Set the content view to the layout file
+        // Set the content view to the main layout file
         setContentView(R.layout.activity_main);
 
         // Initialize the UI components
         commandSpinner = findViewById(R.id.commandSpinner);
         computerListView = findViewById(R.id.computerListView);
         sendButton = findViewById(R.id.sendCommandButton);
-        wolButton = findViewById(R.id.WOLButton);
         responseTextView = findViewById(R.id.responseTextView);
+        wolButton = findViewById(R.id.WOLButton);
+        checkOnlineButton = findViewById(R.id.CheckOnline);
 
         // Populate the computers array with PRPC01 to PRPC27
         for (int i = 0; i < 27; i++) {
             computers[i] = String.format(Locale.US, "PRPC%02d", i + 1);
+            online_comp[i] = true;
+            os_comp[i] = "Unknown OS";
         }
         computers[27] = "172.20.10.2"; // Put you local IP/hostname here to test
+        online_comp[27] = true;
+        os_comp[27] = "Unknown OS";
 
         // Set up the spinners and list view
         ArrayAdapter<String> commandAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, commands);
         commandSpinner.setAdapter(commandAdapter);
-
         // Set up the list view with the computers array
         ArrayAdapter<String> computerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, computers);
         computerListView.setAdapter(computerAdapter);
 
         // Set up the send button click listener
-        sendButton.setOnClickListener(v -> sendCommand());
-
+        sendButton.setOnClickListener(v -> sendServerCommand());
+        // Set up the check online button click listener
+        checkOnlineButton.setOnClickListener(v -> checkOnline());
         // Set up the WOL button click listener
-        wolButton.setOnClickListener(v -> sendWOL());
+        wolButton.setOnClickListener(v -> doWOL());
     }
 
-    private void sendCommand() {
+    private void sendServerCommand() {
         // Get the selected command from the spinner
         String command = commandSpinner.getSelectedItem().toString();
         // Get the selected items from the list view
@@ -71,42 +76,56 @@ public class MainActivity extends AppCompatActivity {
                 String host = computers[index]; // Get the host name of the selected computer
                 // Send the command to the selected computer using a separate thread
                 new Thread(() -> {
-                    String response;
-                    // response for Check Online PCs
-                    if (command.equals("Check Online PCs")) {
-                        response = TcpClient.sendCheckCommand(host, 41007, command);
-                    } else {
-                        TcpClient.sendCommand(host, 41007, command, MainActivity.this, responseTextView);
-                        scrollResponse();
-                        return;
-                    }
-                    final String finalResponse = response;
-                    runOnUiThread(() -> handleResponse(finalResponse, host, index));
+                    final int j = index;
+                    TcpClient.sendCommand(host, 41007, command,MainActivity.this, responseTextView, response -> {
+                        if (command.equals("Shutdown") && response.contains("Shutting down")) {
+                            online_comp[j] = false;
+                        }
+                        else if (command.equals("Echo") && !response.toLowerCase().contains("error")) {
+                            String[] parts = response.split(" - ", 2);
+                            if (parts.length == 2) {
+                                os_comp[j] = parts[1]; 
+                            } else {
+                                os_comp[j] = response; 
+                            }
+                            online_comp[j] = true;
+                        }
+                        else if (command.equals("Restart") && response.contains("Rebooting...")) {
+                            online_comp[j] = true;
+                        }
+                    });
+                    scrollResp();
                 }).start();
             }
         }
     }
-
-    private void handleResponse(String response, String host, int index) {
-            if (!response.toLowerCase().contains("error")) {
-                os_comp[index] = response.trim(); // Set the OS name
-                online_comp[index] = true;       // Set the computer as online
-                responseTextView.append(host + " - " + os_comp[index] + " is ONLINE\n"); // Print the response
-            } else {
-                os_comp[index] = "unknown"; // Set the OS name to unknown
-                online_comp[index] = false; // Set the computer as offline
-                responseTextView.append(host + " - " + os_comp[index] + " is OFFLINE\n"); // Print the response
+    private void doWOL() {
+        responseTextView.append("Sending Wake-on-LAN to offline PCs:\n");
+        for (int i = 0; i < computers.length; i++) {
+            if (!online_comp[i]) {
+                online_comp[i] = true;
+                responseTextView.append(computers[i] + " turned ON\n");
             }
-            scrollResponse();
+        }
+        responseTextView.append("\n");
+        scrollResp();
     }
 
-    private void scrollResponse() {
-    responseTextView.post(() -> {
-        NestedScrollView nestedScrollView = findViewById(R.id.nestedScrollView);
-        nestedScrollView.fullScroll(View.FOCUS_DOWN);
-    });
-}
-    private void sendWOL(){
-        
+    private void checkOnline() {
+        responseTextView.append("Online PCs:\n");
+        for (int i = 0; i < computers.length; i++) {
+            if (online_comp[i]) { 
+                responseTextView.append(computers[i] + " - " + os_comp[i] + "\n");
+            }
+        }
+        responseTextView.append("\n");
+        scrollResp();
+    }
+
+    private void scrollResp() {
+        responseTextView.post(() -> {
+            NestedScrollView nestedScrollView = findViewById(R.id.nestedScrollView);
+            nestedScrollView.fullScroll(View.FOCUS_DOWN);
+        });
     }
 }
