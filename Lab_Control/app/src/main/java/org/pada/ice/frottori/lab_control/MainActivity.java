@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         online_comp[27] = false;
         os_comp[27] = "Unknown OS";
 
+
         // Set up the spinners and list view
         ArrayAdapter<String> commandAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, commands);
         commandSpinner.setAdapter(commandAdapter);

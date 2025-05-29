@@ -27,7 +27,7 @@
         app:layout_constraintBottom_toTopOf="@+id/sendCommandButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.5"
-        app:layout_constraintHorizontal_bias="0.524"
+        app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/commandSpinner"
         app:layout_constraintVertical_bias="0.0" />
@@ -49,11 +49,11 @@
         android:id="@+id/WOLButton"
         android:layout_width="138dp"
         android:layout_height="53dp"
-        android:layout_marginTop="612dp"
+        android:layout_marginTop="608dp"
         android:text="WOL"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.132"
+        app:layout_constraintHorizontal_bias="0.879"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -61,11 +61,11 @@
         android:id="@+id/CheckOnline"
         android:layout_width="138dp"
         android:layout_height="53dp"
-        android:layout_marginTop="612dp"
+        android:layout_marginTop="608dp"
         android:text="Check Online"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.896"
+        app:layout_constraintHorizontal_bias="0.124"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -75,7 +75,7 @@
         android:layout_height="161dp"
         android:layout_marginTop="68dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.561"
+        app:layout_constraintHorizontal_bias="0.508"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/computerListView">
 

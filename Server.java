@@ -21,8 +21,7 @@ public class Server {
                 }
             }
         } catch (IOException e) {
-            System.out.println("Error: " + e.getMessage());
-            
+            System.out.println("Error: " + e.getMessage());      
         }
     }
 
@@ -30,9 +29,9 @@ public class Server {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
              PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true)) {
 
-            String command;                                             // Command received from the client
-            String osName = System.getProperty("os.name");          // Get the OS name
-            String hostName = InetAddress.getLocalHost().getHostName(); // Get the hostname of the PC
+            String command;                                                 // Command received from the client
+            String osName = System.getProperty("os.name");              // Get the OS name
+            String hostName = InetAddress.getLocalHost().getHostName();     // Get the hostname of the PC
 
             while ((command = in.readLine()) != null) {
                 System.out.println("Received command: " + command);
