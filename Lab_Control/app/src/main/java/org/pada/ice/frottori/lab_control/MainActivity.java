@@ -11,6 +11,7 @@ import java.util.Locale;
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import androidx.core.widget.NestedScrollView;
+import android.text.Html;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,7 +38,8 @@ public class MainActivity extends AppCompatActivity {
         wolButton = findViewById(R.id.WOLButton);
         checkOnlineButton = findViewById(R.id.CheckOnline);
 
-        // Populate the computers array with PRPC01 to PRPC27
+        // Populate the computers array with PRPC01 to PRPC27 and their online status
+        // and OS information
         for (int i = 0; i < 27; i++) {
             computers[i] = String.format(Locale.US, "PRPC%02d", i + 1);
             online_comp[i] = true;
@@ -68,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         // Get the selected items from the list view
         SparseBooleanArray checkedItems = computerListView.getCheckedItemPositions();
         // Print the select command
-        responseTextView.append(command + ":\n");
+        responseTextView.append(Html.fromHtml("<b>" + command + ":\n</b><br>", Html.FROM_HTML_MODE_LEGACY));
 
         for (int i = 0; i < checkedItems.size(); i++) {
             int index = checkedItems.keyAt(i); // Get the index of the checked item
@@ -100,7 +102,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     private void doWOL() {
-        responseTextView.append("Sending Wake-on-LAN to offline PCs:\n");
+        // HTML formatting for bold text
+        responseTextView.append(Html.fromHtml("<b>Sending Wake-on-LAN to offline PCs:\n</b><br>", Html.FROM_HTML_MODE_LEGACY));
         for (int i = 0; i < computers.length; i++) {
             if (!online_comp[i]) {
                 online_comp[i] = true;
@@ -112,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkOnline() {
-        responseTextView.append("Online PCs:\n");
+       responseTextView.append(Html.fromHtml("<b>Online PCs:\n</b><br>", Html.FROM_HTML_MODE_LEGACY));
         for (int i = 0; i < computers.length; i++) {
             if (online_comp[i]) { 
                 responseTextView.append(computers[i] + " - " + os_comp[i] + "\n");
