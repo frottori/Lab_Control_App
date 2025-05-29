@@ -20,8 +20,8 @@ public class MainActivity extends AppCompatActivity {
     TextView responseTextView;
     String[] commands = {"Echo", "Restart", "Shutdown", "Restore", "Check Online PCs"};
     String[] computers = new String[28];
-    Boolean[] online_comp = new Boolean[28];
-    String[]  os_comp = new String[28];
+    Boolean[] online_comp = new Boolean[28]; // Array to track online status of computers
+    String[]  os_comp = new String[28];      // Array to store OS names of computers
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,10 +77,7 @@ public class MainActivity extends AppCompatActivity {
                         response = TcpClient.sendCheckCommand(host, 41007, command);
                     } else {
                         TcpClient.sendCommand(host, 41007, command, MainActivity.this, responseTextView);
-                        responseTextView.post(() -> {
-                            NestedScrollView nestedScrollView = findViewById(R.id.nestedScrollView);
-                            nestedScrollView.fullScroll(View.FOCUS_DOWN);
-                        });
+                        scrollResponse();
                         return;
                     }
                     final String finalResponse = response;
@@ -92,19 +89,23 @@ public class MainActivity extends AppCompatActivity {
 
     private void handleResponse(String response, String host, int index) {
             if (!response.toLowerCase().contains("error")) {
-                os_comp[index] = response.trim();
-                online_comp[index] = true;
-                responseTextView.append(host + " - " + os_comp[index] + " is ONLINE\n");
+                os_comp[index] = response.trim(); // Set the OS name
+                online_comp[index] = true;       // Set the computer as online
+                responseTextView.append(host + " - " + os_comp[index] + " is ONLINE\n"); // Print the response
             } else {
-                os_comp[index] = "unknown";
-                online_comp[index] = false;
-                responseTextView.append(host + " - " + os_comp[index] + " is OFFLINE\n");
+                os_comp[index] = "unknown"; // Set the OS name to unknown
+                online_comp[index] = false; // Set the computer as offline
+                responseTextView.append(host + " - " + os_comp[index] + " is OFFLINE\n"); // Print the response
             }
-        responseTextView.post(() -> {
-            NestedScrollView nestedScrollView = findViewById(R.id.nestedScrollView);
-            nestedScrollView.fullScroll(View.FOCUS_DOWN);
-        });
+            scrollResponse();
     }
+
+    private void scrollResponse() {
+    responseTextView.post(() -> {
+        NestedScrollView nestedScrollView = findViewById(R.id.nestedScrollView);
+        nestedScrollView.fullScroll(View.FOCUS_DOWN);
+    });
+}
     private void sendWOL(){
         
     }
