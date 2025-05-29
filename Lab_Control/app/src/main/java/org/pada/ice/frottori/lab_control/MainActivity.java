@@ -71,24 +71,26 @@ public class MainActivity extends AppCompatActivity {
                 String host = computers[index]; // Get the host name of the selected computer
                 // Send the command to the selected computer using a separate thread
                 new Thread(() -> {
-                    String response = null;
-                    // Restore gets two responses so we call different client for it
-                    if (command.equals("Restore")) {
-                        TcpClient.sendCommandRestore(host, 41007, MainActivity.this, responseTextView);
-                        return;
+                    String response;
+                    // response for Check Online PCs
+                    if (command.equals("Check Online PCs")) {
+                        response = TcpClient.sendCheckCommand(host, 41007, command);
                     } else {
-                        response = TcpClient.sendCommand(host, 41007, command);
+                        TcpClient.sendCommand(host, 41007, command, MainActivity.this, responseTextView);
+                        responseTextView.post(() -> {
+                            NestedScrollView nestedScrollView = findViewById(R.id.nestedScrollView);
+                            nestedScrollView.fullScroll(View.FOCUS_DOWN);
+                        });
+                        return;
                     }
-
                     final String finalResponse = response;
-                    runOnUiThread(() -> handleResponse(command, finalResponse, host, index));
+                    runOnUiThread(() -> handleResponse(finalResponse, host, index));
                 }).start();
             }
         }
     }
 
-    private void handleResponse(String command, String response, String host, int index) {
-        if (command.equals("Check Online PCs")) {
+    private void handleResponse(String response, String host, int index) {
             if (!response.toLowerCase().contains("error")) {
                 os_comp[index] = response.trim();
                 online_comp[index] = true;
@@ -98,16 +100,11 @@ public class MainActivity extends AppCompatActivity {
                 online_comp[index] = false;
                 responseTextView.append(host + " - " + os_comp[index] + " is OFFLINE\n");
             }
-        } else if (response != null) {
-            responseTextView.append(response + "\n");
-        }
-
         responseTextView.post(() -> {
             NestedScrollView nestedScrollView = findViewById(R.id.nestedScrollView);
             nestedScrollView.fullScroll(View.FOCUS_DOWN);
         });
     }
-
     private void sendWOL(){
         
     }

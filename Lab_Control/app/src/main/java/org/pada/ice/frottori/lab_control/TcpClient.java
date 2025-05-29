@@ -8,7 +8,7 @@ import android.app.Activity;
 import android.widget.TextView;
 
 public class TcpClient {
-    public static String sendCommand(String host, int port, String command) {
+    public static String sendCheckCommand(String host, int port, String command) {
         try (Socket socket = new Socket(host, port);
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
@@ -28,12 +28,12 @@ public class TcpClient {
         }
     }
 
-    public static void sendCommandRestore(String host, int port, Activity activity, TextView responseTextView ){
+    public static void sendCommand(String host, int port, String command, Activity activity, TextView responseTextView ){
         try (Socket socket = new Socket(host, port);
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
-            out.println("Restore");
+            out.println(command);
             String line;
             while ((line = in.readLine()) != null) {
                 if (line.equals("END"))
