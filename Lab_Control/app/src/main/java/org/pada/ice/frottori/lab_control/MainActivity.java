@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < 27; i++) {
             computers[i] = String.format(Locale.US, "PRPC%02d", i + 1);
         }
-        computers[27] = "192.168.68.107"; // Put you local IP/hostname here to test
+        computers[27] = "172.20.10.2"; // Put you local IP/hostname here to test
 
         // Set up the spinners and list view
         ArrayAdapter<String> commandAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, commands);
@@ -71,33 +71,41 @@ public class MainActivity extends AppCompatActivity {
                 String host = computers[index]; // Get the host name of the selected computer
                 // Send the command to the selected computer using a separate thread
                 new Thread(() -> {
-                    String response = TcpClient.sendCommand(host, 41007, command); // send
-                    runOnUiThread(() -> {
+                    String response = null;
+                    // Restore gets two responses so we call different client for it
+                    if (command.equals("Restore")) {
+                        TcpClient.sendCommandRestore(host, 41007, MainActivity.this, responseTextView);
+                        return;
+                    } else {
+                        response = TcpClient.sendCommand(host, 41007, command);
+                    }
 
-                        if (command.equals("Check Online PCs")) {
-                            if (!response.toLowerCase().contains("error")) {
-                                os_comp[index] = response.trim();
-                                online_comp[index] = true;      // Mark as active
-                                responseTextView.append(host + " - " + os_comp[index] + " is ONLINE\n");
-                            } else {
-                                os_comp[index] = "unknown"; // Store osName
-                                online_comp[index] = false; // Mark as inactive
-                                responseTextView.append(host + " - " + os_comp[index] + " is OFFLINE\n");
-                            }
-                        }
-                        else {
-                            responseTextView.append(response + "\n");
-                        }
-
-                        // Auto-scroll to the bottom after updating the TextView
-                        responseTextView.post(() -> {
-                            NestedScrollView nestedScrollView = findViewById(R.id.nestedScrollView);
-                            nestedScrollView.fullScroll(View.FOCUS_DOWN);
-                        });
-                    });
+                    final String finalResponse = response;
+                    runOnUiThread(() -> handleResponse(command, finalResponse, host, index));
                 }).start();
             }
         }
+    }
+
+    private void handleResponse(String command, String response, String host, int index) {
+        if (command.equals("Check Online PCs")) {
+            if (!response.toLowerCase().contains("error")) {
+                os_comp[index] = response.trim();
+                online_comp[index] = true;
+                responseTextView.append(host + " - " + os_comp[index] + " is ONLINE\n");
+            } else {
+                os_comp[index] = "unknown";
+                online_comp[index] = false;
+                responseTextView.append(host + " - " + os_comp[index] + " is OFFLINE\n");
+            }
+        } else if (response != null) {
+            responseTextView.append(response + "\n");
+        }
+
+        responseTextView.post(() -> {
+            NestedScrollView nestedScrollView = findViewById(R.id.nestedScrollView);
+            nestedScrollView.fullScroll(View.FOCUS_DOWN);
+        });
     }
 
     private void sendWOL(){
