@@ -42,11 +42,11 @@ public class MainActivity extends AppCompatActivity {
         // and OS information
         for (int i = 0; i < 27; i++) {
             computers[i] = String.format(Locale.US, "PRPC%02d", i + 1);
-            online_comp[i] = true;
+            online_comp[i] = false;
             os_comp[i] = "Unknown OS";
         }
         computers[27] = "172.20.10.2"; // Put you local IP/hostname here to test
-        online_comp[27] = true;
+        online_comp[27] = false;
         os_comp[27] = "Unknown OS";
 
         // Set up the spinners and list view
@@ -93,6 +93,9 @@ public class MainActivity extends AppCompatActivity {
                             online_comp[j] = true;
                         }
                         else if (command.equals("Restart") && response.contains("Rebooting...")) {
+                            online_comp[j] = true;
+                        }
+                        else{
                             online_comp[j] = true;
                         }
                     });
