@@ -6,6 +6,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 public class ComputerListAdapter extends ArrayAdapter<String> {
     private final Context context;
     private final String[] computers;
@@ -18,6 +20,7 @@ public class ComputerListAdapter extends ArrayAdapter<String> {
         this.onlineStatus = onlineStatus;
     }
 
+    @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Use the default layout for multiple choice items

@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
             online_comp[i] = false;
             os_comp[i] = "Unknown OS";
         }
-        computers[27] = "192.168.10.18"; // Put you local IP/hostname here to test
+        computers[27] = "192.168.68.107"; // Put you local IP/hostname here to test
         online_comp[27] = false;
         os_comp[27] = "Unknown OS";
 
@@ -84,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
                     TcpClient.sendCommand(host, 41007, command,MainActivity.this, responseTextView, response -> {
                         if (command.equals("Shutdown") && response.contains("Shutting down")) {
                             online_comp[j] = false;
-                            computerListView.invalidateViews();
                         }
                         else if (command.equals("Echo") && !response.toLowerCase().contains("error")) {
                             String[] parts = response.split(" - ", 2);
@@ -94,15 +93,9 @@ public class MainActivity extends AppCompatActivity {
                                 os_comp[j] = response; 
                             }
                             online_comp[j] = true;
-                            computerListView.invalidateViews();
                         }
                         else if (command.equals("Restart") && response.contains("Rebooting...")) {
                             online_comp[j] = true;
-                            computerListView.invalidateViews();
-                        }
-                        else{
-                            online_comp[j] = true;
-                            computerListView.invalidateViews();
                         }
                     });
                     scrollResp();
@@ -117,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
             if (!online_comp[i]) {
                 online_comp[i] = true;
                 responseTextView.append(computers[i] + " turned ON\n");
-                computerListView.invalidateViews();
             }
         }
         responseTextView.append("\n");
@@ -125,14 +117,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkOnline() {
-       responseTextView.append(Html.fromHtml("<b>Online PCs:\n</b><br>", Html.FROM_HTML_MODE_LEGACY));
         for (int i = 0; i < computers.length; i++) {
-            if (online_comp[i]) { 
-                responseTextView.append(computers[i] + " - " + os_comp[i] + "\n");
-            }
+            computerListView.invalidateViews();
         }
-        responseTextView.append("\n");
-        scrollResp();
     }
 
     private void scrollResp() {
