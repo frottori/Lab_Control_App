@@ -45,17 +45,18 @@ public class MainActivity extends AppCompatActivity {
             online_comp[i] = false;
             os_comp[i] = "Unknown OS";
         }
-        computers[27] = "172.20.10.2"; // Put you local IP/hostname here to test
+        computers[27] = "192.168.10.18"; // Put you local IP/hostname here to test
         online_comp[27] = false;
         os_comp[27] = "Unknown OS";
 
-
+        ComputerListAdapter computerAdapter = new ComputerListAdapter(this, computers, online_comp);
+        computerListView.setAdapter(computerAdapter);
         // Set up the spinners and list view
         ArrayAdapter<String> commandAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, commands);
         commandSpinner.setAdapter(commandAdapter);
         // Set up the list view with the computers array
-        ArrayAdapter<String> computerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, computers);
-        computerListView.setAdapter(computerAdapter);
+        //ArrayAdapter<String> computerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, computers);
+        //computerListView.setAdapter(computerAdapter);
 
         // Set up the send button click listener
         sendButton.setOnClickListener(v -> sendServerCommand());
@@ -83,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
                     TcpClient.sendCommand(host, 41007, command,MainActivity.this, responseTextView, response -> {
                         if (command.equals("Shutdown") && response.contains("Shutting down")) {
                             online_comp[j] = false;
+                            computerListView.invalidateViews();
                         }
                         else if (command.equals("Echo") && !response.toLowerCase().contains("error")) {
                             String[] parts = response.split(" - ", 2);
@@ -92,12 +94,15 @@ public class MainActivity extends AppCompatActivity {
                                 os_comp[j] = response; 
                             }
                             online_comp[j] = true;
+                            computerListView.invalidateViews();
                         }
                         else if (command.equals("Restart") && response.contains("Rebooting...")) {
                             online_comp[j] = true;
+                            computerListView.invalidateViews();
                         }
                         else{
                             online_comp[j] = true;
+                            computerListView.invalidateViews();
                         }
                     });
                     scrollResp();
@@ -112,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
             if (!online_comp[i]) {
                 online_comp[i] = true;
                 responseTextView.append(computers[i] + " turned ON\n");
+                computerListView.invalidateViews();
             }
         }
         responseTextView.append("\n");
