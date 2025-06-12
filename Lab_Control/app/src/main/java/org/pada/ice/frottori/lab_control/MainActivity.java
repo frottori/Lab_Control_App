@@ -125,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
                 String mac = computers_mac[i];
                 new Thread(() -> sendWOLPacket(mac)).start();
                 online_comp[i] = true;
+                //checkOnline();
             }
         }
         responseTextView.append("\n");
