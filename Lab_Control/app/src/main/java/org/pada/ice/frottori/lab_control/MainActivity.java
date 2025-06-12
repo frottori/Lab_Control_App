@@ -7,6 +7,11 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.util.SparseBooleanArray;
+
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.util.Arrays;
 import java.util.Locale;
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
@@ -22,7 +27,16 @@ public class MainActivity extends AppCompatActivity {
     String[] commands = {"Echo", "Restart", "Shutdown", "Restore"};
     String[] computers = new String[28];
     Boolean[] online_comp = new Boolean[28]; 
-    String[]  os_comp = new String[28];    
+    String[]  os_comp = new String[28];  
+    String[] computers_mac = {
+            "50:81:40:2B:91:8D", "50:81:40:2B:7C:78", "50:81:40:2B:78:DD", "50:81:40:2B:7B:3D", "50:81:40:2B:79:91",
+            "C8:5A:CF:0F:76:3D", "C8:5A:CF:0D:71:24", "C8:5A:CF:0F:B3:FF", "C8:5A:CF:0E:2C:C4", "C8:5A:CF:0F:7C:D0",
+            "C8:5A:CF:0D:71:3A", "C8:5A:CF:0F:EE:01", "C8:5A:CF:0E:1D:88", "C8:5A:CF:0F:F0:1E", "50:81:40:2B:7D:A4",
+            "C8:5A:CF:0E:2C:78", "50:81:40:2B:87:F4", "C8:5A:CF:0F:EC:11", "C8:5A:CF:0F:7C:1F", "C8:5A:CF:0D:71:2C",
+            "C8:5A:CF:0D:70:95", "50:81:40:2B:5F:D0", "50:81:40:2B:7A:0B", "50:81:40:2B:8F:D3", "50:81:40:2B:72:E0",
+            "50:81:40:2B:7A:74", "C8:5A:CF:0F:7C:D4", "00:00:00:00:00:00" // placeholder for test
+    };
+  
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,8 +122,9 @@ public class MainActivity extends AppCompatActivity {
         responseTextView.append(Html.fromHtml("<b>Sending Wake-on-LAN to offline PCs:\n</b><br>", Html.FROM_HTML_MODE_LEGACY));
         for (int i = 0; i < computers.length; i++) {
             if (!online_comp[i]) {
+                String mac = computers_mac[i];
+                new Thread(() -> sendWOLPacket(mac)).start();
                 online_comp[i] = true;
-                responseTextView.append(computers[i] + " turned ON\n");
             }
         }
         responseTextView.append("\n");
@@ -127,5 +142,30 @@ public class MainActivity extends AppCompatActivity {
             NestedScrollView nestedScrollView = findViewById(R.id.nestedScrollView);
             nestedScrollView.fullScroll(View.FOCUS_DOWN);
         });
+    }
+
+    private void sendWOLPacket(String macStr) {
+        try {
+            byte[] macBytes = new byte[6];
+            String[] hex = macStr.split("[:-]");
+            for (int i = 0; i < 6; i++) {
+                macBytes[i] = (byte) Integer.parseInt(hex[i], 16);
+            }
+
+            byte[] bytes = new byte[6 + 16 * macBytes.length];
+            Arrays.fill(bytes, 0, 6, (byte) 0xFF);
+            for (int i = 6; i < bytes.length; i += macBytes.length) {
+                System.arraycopy(macBytes, 0, bytes, i, macBytes.length);
+            }
+
+            InetAddress address = InetAddress.getByName("255.255.255.255");
+            DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, 9);
+            DatagramSocket socket = new DatagramSocket();
+            socket.setBroadcast(true);
+            socket.send(packet);
+            socket.close();
+        } catch (Exception e) {
+            runOnUiThread(() -> responseTextView.append("WOL error: " + e.getMessage() + "\n"));
+        }
     }
 }
