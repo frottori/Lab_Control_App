@@ -158,8 +158,8 @@ public class MainActivity extends AppCompatActivity {
             for (int i = 6; i < bytes.length; i += macBytes.length) {
                 System.arraycopy(macBytes, 0, bytes, i, macBytes.length);
             }
-
-            InetAddress address = InetAddress.getByName("192.168.2.255");
+            // gmele 192.168.88.255
+            InetAddress address = InetAddress.getByName("192.168.2.255"); // your broadcast ip
             DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, 9);
             DatagramSocket socket = new DatagramSocket();
             socket.setBroadcast(true);
