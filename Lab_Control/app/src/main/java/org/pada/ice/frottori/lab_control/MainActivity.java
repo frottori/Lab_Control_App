@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
             "C8:5A:CF:0D:71:3A", "C8:5A:CF:0F:EE:01", "C8:5A:CF:0E:1D:88", "C8:5A:CF:0F:F0:1E", "50:81:40:2B:7D:A4",
             "C8:5A:CF:0E:2C:78", "50:81:40:2B:87:F4", "C8:5A:CF:0F:EC:11", "C8:5A:CF:0F:7C:1F", "C8:5A:CF:0D:71:2C",
             "C8:5A:CF:0D:70:95", "50:81:40:2B:5F:D0", "50:81:40:2B:7A:0B", "50:81:40:2B:8F:D3", "50:81:40:2B:72:E0",
-            "50:81:40:2B:7A:74", "C8:5A:CF:0F:7C:D4", "00:00:00:00:00:00" // placeholder for test
+            "50:81:40:2B:7A:74", "C8:5A:CF:0F:7C:D4", "2C:F0:5D:99:20:CA" // placeholder for test
     };
   
 
@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
             online_comp[i] = false;
             os_comp[i] = "Unknown OS";
         }
-        computers[27] = "192.168.68.107"; // Put you local IP/hostname here to test
+        computers[27] = "192.168.2.3"; // Put you local IP/hostname here to test
         online_comp[27] = false;
         os_comp[27] = "Unknown OS";
 
@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
                 System.arraycopy(macBytes, 0, bytes, i, macBytes.length);
             }
 
-            InetAddress address = InetAddress.getByName("255.255.255.255");
+            InetAddress address = InetAddress.getByName("192.168.2.255");
             DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, 9);
             DatagramSocket socket = new DatagramSocket();
             socket.setBroadcast(true);
