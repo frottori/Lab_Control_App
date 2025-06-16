@@ -26,8 +26,9 @@ public class MainActivity extends AppCompatActivity {
     TextView responseTextView;
     String[] commands = {"Echo", "Restart", "Shutdown", "Restore"};
     String[] computers = new String[28];
-    Boolean[] online_comp = new Boolean[28]; 
-    String[]  os_comp = new String[28];  
+    String[] computers_hostnames = new String[28];
+    Boolean[] online_computers = new Boolean[28]; 
+    String[]  os_computers = new String[28];  
     String[] computers_mac = {
             "50:81:40:2B:91:8D", "50:81:40:2B:7C:78", "50:81:40:2B:78:DD", "50:81:40:2B:7B:3D", "50:81:40:2B:79:91",
             "C8:5A:CF:0F:76:3D", "C8:5A:CF:0D:71:24", "C8:5A:CF:0F:B3:FF", "C8:5A:CF:0E:2C:C4", "C8:5A:CF:0F:7C:D0",
@@ -36,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
             "C8:5A:CF:0D:70:95", "50:81:40:2B:5F:D0", "50:81:40:2B:7A:0B", "50:81:40:2B:8F:D3", "50:81:40:2B:72:E0",
             "50:81:40:2B:7A:74", "C8:5A:CF:0F:7C:D4", "2C:F0:5D:99:20:CA" // placeholder for test
     };
-  
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,14 +56,16 @@ public class MainActivity extends AppCompatActivity {
         // and OS information
         for (int i = 0; i < 27; i++) {
             computers[i] = String.format(Locale.US, "PRPC%02d", i + 1);
-            online_comp[i] = false;
-            os_comp[i] = "Unknown OS";
+            computers_hostnames[i] = computers[i];
+            online_computers[i] = false;
+            os_computers[i] = "Unknown OS";
         }
-        computers[27] = "192.168.2.3"; // Put you local IP/hostname here to test
-        online_comp[27] = false;
-        os_comp[27] = "Unknown OS";
+        computers[27] = "192.168.68.107";
+        computers_hostnames[27] = computers[27];
+        online_computers[27] = false;
+        os_computers[27] = "Unknown OS";
 
-        ComputerListAdapter computerAdapter = new ComputerListAdapter(this, computers, online_comp);
+        ComputerListAdapter computerAdapter = new ComputerListAdapter(this, computers, online_computers);
         computerListView.setAdapter(computerAdapter);
         // Set up the spinners and list view
         ArrayAdapter<String> commandAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, commands);
@@ -91,25 +93,25 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < checkedItems.size(); i++) {
             int index = checkedItems.keyAt(i); // Get the index of the checked item
             if (checkedItems.valueAt(i)) {
-                String host = computers[index]; // Get the host name of the selected computer
+                String host = computers_hostnames[index]; // Get the host name of the selected computer
                 // Send the command to the selected computer using a separate thread
                 new Thread(() -> {
                     final int j = index;
                     TcpClient.sendCommand(host, 41007, command,MainActivity.this, responseTextView, response -> {
                         if (command.equals("Shutdown") && response.contains("Shutting down")) {
-                            online_comp[j] = false;
+                            online_computers[j] = false;
                         }
                         else if (command.equals("Echo") && !response.toLowerCase().contains("error")) {
                             String[] parts = response.split(" - ", 2);
                             if (parts.length == 2) {
-                                os_comp[j] = parts[1]; 
+                                os_computers[j] = parts[1]; 
                             } else {
-                                os_comp[j] = response; 
+                                os_computers[j] = response; 
                             }
-                            online_comp[j] = true;
+                            online_computers[j] = true;
                         }
                         else if (command.equals("Restart") && response.contains("Rebooting...")) {
-                            online_comp[j] = true;
+                            online_computers[j] = true;
                         }
                     });
                     scrollResp();
@@ -119,9 +121,9 @@ public class MainActivity extends AppCompatActivity {
     }
     private void doWOL() {
         // HTML formatting for bold text
-        responseTextView.append(Html.fromHtml("<b>Sending Wake-on-LAN to offline PCs:\n</b><br>", Html.FROM_HTML_MODE_LEGACY));
+        responseTextView.append(Html.fromHtml("<b>Sent Wake-on-LAN to offline PCs\n</b><br>", Html.FROM_HTML_MODE_LEGACY));
         for (int i = 0; i < computers.length; i++) {
-            if (!online_comp[i]) {
+            if (!online_computers[i]) {
                 String mac = computers_mac[i];
                 new Thread(() -> sendWOLPacket(mac)).start();
                 //checkOnline();
@@ -133,8 +135,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkOnline() {
         for (int i = 0; i < computers.length; i++) {
-            computerListView.invalidateViews();
+            String os = os_computers[i] != null ? os_computers[i] : "Unknown OS";
+            computers[i] = computers_hostnames[i] + " - " + os;
         }
+        ((ArrayAdapter) computerListView.getAdapter()).notifyDataSetChanged();
+        computerListView.invalidateViews(); // Optional: force redraw for color/status
     }
 
     private void scrollResp() {
