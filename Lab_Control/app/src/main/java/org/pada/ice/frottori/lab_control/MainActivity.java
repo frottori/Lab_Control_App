@@ -101,11 +101,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         else if (command.equals("Echo") && !response.toLowerCase().contains("error")) {
                             String[] parts = response.split(" - ", 2);
-                            if (parts.length == 2) {
-                                os_computers[j] = parts[1]; 
-                            } else {
-                                os_computers[j] = response; 
-                            }
+                            os_computers[j] = parts.length == 2 ? parts[1] : response;
                             online_computers[j] = true;
                         }
                         else if (command.equals("Restart") && response.contains("Rebooting...")) {
