@@ -65,14 +65,12 @@ public class MainActivity extends AppCompatActivity {
         online_computers[27] = false;
         os_computers[27] = "Unknown OS";
 
+        // Set up the list view with the computers array
         ComputerListAdapter computerAdapter = new ComputerListAdapter(this, computers, online_computers);
         computerListView.setAdapter(computerAdapter);
-        // Set up the spinners and list view
+        // Set up the spinners for commands
         ArrayAdapter<String> commandAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, commands);
         commandSpinner.setAdapter(commandAdapter);
-        // Set up the list view with the computers array
-        //ArrayAdapter<String> computerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, computers);
-        //computerListView.setAdapter(computerAdapter);
 
         // Set up the send button click listener
         sendButton.setOnClickListener(v -> sendServerCommand());
@@ -126,7 +124,6 @@ public class MainActivity extends AppCompatActivity {
             if (!online_computers[i]) {
                 String mac = computers_mac[i];
                 new Thread(() -> sendWOLPacket(mac)).start();
-                //checkOnline();
             }
         }
         responseTextView.append("\n");
@@ -135,11 +132,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkOnline() {
         for (int i = 0; i < computers.length; i++) {
-            String os = os_computers[i] != null ? os_computers[i] : "Unknown OS";
-            computers[i] = computers_hostnames[i] + " - " + os;
+            computers[i] = computers_hostnames[i] + " - " + os_computers[i];
         }
         ((ArrayAdapter) computerListView.getAdapter()).notifyDataSetChanged();
-        computerListView.invalidateViews(); // Optional: force redraw for color/status
+        computerListView.invalidateViews();
     }
 
     private void scrollResp() {
