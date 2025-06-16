@@ -55,8 +55,8 @@ public class MainActivity extends AppCompatActivity {
         // Populate the computers array with PRPC01 to PRPC26 and their online status
         // and OS information
         for (int i = 0; i < 26; i++) {
-            computers[i] = String.format(Locale.US, "PRPC%02d", i + 1);
-            computers_hostnames[i] = computers[i];
+            computers[i] = String.format(Locale.US, "PC %02d", i + 1);
+            computers_ip[i] = String.format(Locale.US, "192.168.88.%d", i + 2);
             online_computers[i] = false;
             os_computers[i] = "Unknown OS";
         }
@@ -127,9 +127,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkOnline() {
-        // Update the response text view with the online status
-        for (int i = 0; i < computers.length; i++) {
-            computers[i] = computers_hostnames[i] + " - " + os_computers[i];
+        for (int i = 0; i < 27; i++) {
+            computers[i] = String.format(Locale.US, "PC %02d", i + 1) + " - " + os_computers[i];
         }
         // Update the adapter with the new computer name list
         ((ArrayAdapter) computerListView.getAdapter()).notifyDataSetChanged();
