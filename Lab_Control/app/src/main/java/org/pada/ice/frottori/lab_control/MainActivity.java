@@ -25,17 +25,19 @@ public class MainActivity extends AppCompatActivity {
     Button sendButton, wolButton, checkOnlineButton;
     TextView responseTextView;
     String[] commands = {"Echo", "Restart", "Shutdown", "Restore"};
-    String[] computers = new String[28];
-    String[] computers_hostnames = new String[28];
-    Boolean[] online_computers = new Boolean[28]; 
-    String[]  os_computers = new String[28];  
+    String[] computers = new String[29];
+    Boolean[] online_computers = new Boolean[29];
+    String[]  os_computers = new String[29];
+    String[] computers_ip = new String[29];
     String[] computers_mac = {
             "50:81:40:2B:91:8D", "50:81:40:2B:7C:78", "50:81:40:2B:78:DD", "50:81:40:2B:7B:3D", "50:81:40:2B:79:91",
             "C8:5A:CF:0F:76:3D", "C8:5A:CF:0D:71:24", "C8:5A:CF:0F:B3:FF", "C8:5A:CF:0E:2C:C4", "C8:5A:CF:0F:7C:D0",
             "C8:5A:CF:0D:71:3A", "C8:5A:CF:0F:EE:01", "C8:5A:CF:0E:1D:88", "C8:5A:CF:0F:F0:1E", "50:81:40:2B:7D:A4",
             "C8:5A:CF:0E:2C:78", "50:81:40:2B:87:F4", "C8:5A:CF:0F:EC:11", "C8:5A:CF:0F:7C:1F", "C8:5A:CF:0D:71:2C",
             "C8:5A:CF:0D:70:95", "50:81:40:2B:5F:D0", "50:81:40:2B:7A:0B", "50:81:40:2B:8F:D3", "50:81:40:2B:72:E0",
-            "50:81:40:2B:7A:74", "C8:5A:CF:0F:7C:D4", "2C:F0:5D:99:20:CA" // placeholder for test
+            "50:81:40:2B:7A:74", "C8:5A:CF:0F:7C:D4",
+            // MACos,  WINDOWS
+            "86:cd:34:f2:1f:a8", "2C:F0:5D:99:20:CA" 
     };
 
     @Override
@@ -55,15 +57,20 @@ public class MainActivity extends AppCompatActivity {
         // Populate the computers array with PRPC01 to PRPC27 and their online status
         // and OS information
         for (int i = 0; i < 27; i++) {
-            computers[i] = String.format(Locale.US, "PRPC%02d", i + 1);
-            computers_hostnames[i] = computers[i];
+            computers[i] = String.format(Locale.US, "PC %02d", i + 1);
+            computers_ip[i] = String.format(Locale.US, "192.168.88.%d", i + 2);
             online_computers[i] = false;
             os_computers[i] = "Unknown OS";
         }
-        computers[27] = "192.168.68.107";
-        computers_hostnames[27] = computers[27];
+        computers[27] = "Frosso's Macbook Air";
+        computers_ip[27] = "192.168.68.107";
         online_computers[27] = false;
         os_computers[27] = "Unknown OS";
+
+        computers[28] = "Frosso's PC";
+        computers_ip[28] = "192.168.68.116";
+        online_computers[28] = false;
+        os_computers[28] = "Unknown OS";
 
         // Set up the list view with the computers array
         ComputerListAdapter computerAdapter = new ComputerListAdapter(this, computers, online_computers);
@@ -91,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < checkedItems.size(); i++) {
             int index = checkedItems.keyAt(i); // Get the index of the checked item
             if (checkedItems.valueAt(i)) {
-                String host = computers_hostnames[index]; // Get the host name of the selected computer
+                String host = computers_ip[index]; // Get the host name of the selected computer
                 // Send the command to the selected computer using a separate thread
                 new Thread(() -> {
                     final int j = index;
@@ -126,9 +133,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkOnline() {
-        for (int i = 0; i < computers.length; i++) {
-            computers[i] = computers_hostnames[i] + " - " + os_computers[i];
+        for (int i = 0; i < 27; i++) {
+            computers[i] = String.format(Locale.US, "PC %02d", i + 1) + " - " + os_computers[i];
         }
+        computers[27] = "Frosso's Macbook Air" + " - " + os_computers[27];;
+        computers[28] = "Frosso's PC"+ " - " + os_computers[28];;
+
         ((ArrayAdapter) computerListView.getAdapter()).notifyDataSetChanged();
         computerListView.invalidateViews();
     }
