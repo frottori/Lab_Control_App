@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         wolButton = findViewById(R.id.WOLButton);
         checkOnlineButton = findViewById(R.id.CheckOnline);
 
-        // Populate the computers array with PRPC01 to PRPC27 and their online status
+        // Populate the computers array with PRPC01 to PRPC26 and their online status
         // and OS information
         for (int i = 0; i < 26; i++) {
             computers[i] = String.format(Locale.US, "PRPC%02d", i + 1);
@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
             online_computers[i] = false;
             os_computers[i] = "Unknown OS";
         }
+        // Add the last computer PRPC27DESK
         computers[26] = "PRPC27DESK";
         computers_hostnames[26] = computers[26];
         online_computers[26] = false;
@@ -89,9 +90,11 @@ public class MainActivity extends AppCompatActivity {
         responseTextView.append(Html.fromHtml("<b>" + command + ":\n</b><br>", Html.FROM_HTML_MODE_LEGACY));
 
         for (int i = 0; i < checkedItems.size(); i++) {
-            int index = checkedItems.keyAt(i); // Get the index of the checked item
+            // Get the index of the checked item
+            int index = checkedItems.keyAt(i); 
             if (checkedItems.valueAt(i)) {
-                String host = computers_hostnames[index]; // Get the host name of the selected computer
+                // Get the host name of the selected computer
+                String host = computers_hostnames[index]; 
                 // Send the command to the selected computer using a separate thread
                 new Thread(() -> {
                     final int j = index;
@@ -117,26 +120,27 @@ public class MainActivity extends AppCompatActivity {
         // HTML formatting for bold text
         responseTextView.append(Html.fromHtml("<b>Sent Wake-on-LAN to offline PCs\n</b><br>", Html.FROM_HTML_MODE_LEGACY));
         for (int i = 0; i < computers.length; i++) {
-            if (!online_computers[i]) {
-                String mac = computers_mac[i];
-                new Thread(() -> sendWOLPacket(mac)).start();
-            }
+            String mac = computers_mac[i];
+            new Thread(() -> sendWOLPacket(mac)).start();
         }
-        responseTextView.append("\n");
         scrollResp();
     }
 
     private void checkOnline() {
+        // Update the response text view with the online status
         for (int i = 0; i < computers.length; i++) {
             computers[i] = computers_hostnames[i] + " - " + os_computers[i];
         }
+        // Update the adapter with the new computer name list
         ((ArrayAdapter) computerListView.getAdapter()).notifyDataSetChanged();
+        // Update the colors based on online status
         computerListView.invalidateViews();
     }
 
     private void scrollResp() {
         responseTextView.post(() -> {
             NestedScrollView nestedScrollView = findViewById(R.id.nestedScrollView);
+            // Scroll to the bottom of the response text view
             nestedScrollView.fullScroll(View.FOCUS_DOWN);
         });
     }
@@ -155,9 +159,12 @@ public class MainActivity extends AppCompatActivity {
                 System.arraycopy(macBytes, 0, bytes, i, macBytes.length);
             }
 
+            // Send the WOL packet to the broadcast address
             InetAddress address = InetAddress.getByName("192.168.88.255");
             DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, 9);
             DatagramSocket socket = new DatagramSocket();
+
+            // Allow broadcast
             socket.setBroadcast(true);
             socket.send(packet);
             socket.close();
