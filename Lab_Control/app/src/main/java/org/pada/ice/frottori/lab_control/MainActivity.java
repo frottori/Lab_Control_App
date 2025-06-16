@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     TextView responseTextView;
     String[] commands = {"Echo", "Restart", "Shutdown", "Restore"};
     String[] computers = new String[27];
-    String[] computers_hostnames = new String[27];
+    String[] computers_ips = new String[27];
     Boolean[] online_computers = new Boolean[27];
     String[]  os_computers = new String[27];
     String[] computers_mac = {
@@ -54,17 +54,12 @@ public class MainActivity extends AppCompatActivity {
 
         // Populate the computers array with PRPC01 to PRPC26 and their online status
         // and OS information
-        for (int i = 0; i < 26; i++) {
+        for (int i = 0; i < computers.length; i++) {
             computers[i] = String.format(Locale.US, "PC %02d", i + 1);
             computers_ip[i] = String.format(Locale.US, "192.168.88.%d", i + 2);
             online_computers[i] = false;
             os_computers[i] = "Unknown OS";
         }
-        // Add the last computer PRPC27DESK
-        computers[26] = "PRPC27DESK";
-        computers_hostnames[26] = computers[26];
-        online_computers[26] = false;
-        os_computers[26] = "Unknown OS";
 
         // Set up the list view with the computers array
         ComputerListAdapter computerAdapter = new ComputerListAdapter(this, computers, online_computers);
@@ -94,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
             int index = checkedItems.keyAt(i); 
             if (checkedItems.valueAt(i)) {
                 // Get the host name of the selected computer
-                String host = computers_hostnames[index]; 
+                String host = computers_ips[index]; 
                 // Send the command to the selected computer using a separate thread
                 new Thread(() -> {
                     final int j = index;
@@ -127,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkOnline() {
-        for (int i = 0; i < 27; i++) {
+        for (int i = 0; i < computers.length; i++) {
             computers[i] = String.format(Locale.US, "PC %02d", i + 1) + " - " + os_computers[i];
         }
         // Update the adapter with the new computer name list
