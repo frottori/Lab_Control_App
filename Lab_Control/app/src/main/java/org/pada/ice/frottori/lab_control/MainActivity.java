@@ -25,17 +25,17 @@ public class MainActivity extends AppCompatActivity {
     Button sendButton, wolButton, checkOnlineButton;
     TextView responseTextView;
     String[] commands = {"Echo", "Restart", "Shutdown", "Restore"};
-    String[] computers = new String[28];
-    String[] computers_hostnames = new String[28];
-    Boolean[] online_computers = new Boolean[28]; 
-    String[]  os_computers = new String[28];  
+    String[] computers = new String[27];
+    String[] computers_hostnames = new String[27];
+    Boolean[] online_computers = new Boolean[27];
+    String[]  os_computers = new String[27];
     String[] computers_mac = {
             "50:81:40:2B:91:8D", "50:81:40:2B:7C:78", "50:81:40:2B:78:DD", "50:81:40:2B:7B:3D", "50:81:40:2B:79:91",
             "C8:5A:CF:0F:76:3D", "C8:5A:CF:0D:71:24", "C8:5A:CF:0F:B3:FF", "C8:5A:CF:0E:2C:C4", "C8:5A:CF:0F:7C:D0",
             "C8:5A:CF:0D:71:3A", "C8:5A:CF:0F:EE:01", "C8:5A:CF:0E:1D:88", "C8:5A:CF:0F:F0:1E", "50:81:40:2B:7D:A4",
             "C8:5A:CF:0E:2C:78", "50:81:40:2B:87:F4", "C8:5A:CF:0F:EC:11", "C8:5A:CF:0F:7C:1F", "C8:5A:CF:0D:71:2C",
             "C8:5A:CF:0D:70:95", "50:81:40:2B:5F:D0", "50:81:40:2B:7A:0B", "50:81:40:2B:8F:D3", "50:81:40:2B:72:E0",
-            "50:81:40:2B:7A:74", "C8:5A:CF:0F:7C:D4", "2C:F0:5D:99:20:CA" // placeholder for test
+            "50:81:40:2B:7A:74", "C8:5A:CF:0F:7C:D4"
     };
 
     @Override
@@ -54,16 +54,16 @@ public class MainActivity extends AppCompatActivity {
 
         // Populate the computers array with PRPC01 to PRPC27 and their online status
         // and OS information
-        for (int i = 0; i < 27; i++) {
+        for (int i = 0; i < 26; i++) {
             computers[i] = String.format(Locale.US, "PRPC%02d", i + 1);
             computers_hostnames[i] = computers[i];
             online_computers[i] = false;
             os_computers[i] = "Unknown OS";
         }
-        computers[27] = "192.168.68.107";
-        computers_hostnames[27] = computers[27];
-        online_computers[27] = false;
-        os_computers[27] = "Unknown OS";
+        computers[26] = "PRPC27DESK";
+        computers_hostnames[26] = computers[26];
+        online_computers[26] = false;
+        os_computers[26] = "Unknown OS";
 
         // Set up the list view with the computers array
         ComputerListAdapter computerAdapter = new ComputerListAdapter(this, computers, online_computers);
@@ -154,8 +154,8 @@ public class MainActivity extends AppCompatActivity {
             for (int i = 6; i < bytes.length; i += macBytes.length) {
                 System.arraycopy(macBytes, 0, bytes, i, macBytes.length);
             }
-            // gmele 192.168.88.255
-            InetAddress address = InetAddress.getByName("192.168.2.255"); // your broadcast ip
+
+            InetAddress address = InetAddress.getByName("192.168.88.255");
             DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, 9);
             DatagramSocket socket = new DatagramSocket();
             socket.setBroadcast(true);
