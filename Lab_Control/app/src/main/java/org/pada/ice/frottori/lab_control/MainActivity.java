@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         // and OS information
         for (int i = 0; i < computers.length; i++) {
             computers[i] = String.format(Locale.US, "PC %02d", i + 1);
-            computers_ip[i] = String.format(Locale.US, "192.168.88.%d", i + 2);
+            computers_ips[i] = String.format(Locale.US, "192.168.88.%d", i + 2);
             online_computers[i] = false;
             os_computers[i] = "Unknown OS";
         }
