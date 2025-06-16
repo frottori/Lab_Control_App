@@ -122,7 +122,6 @@ public class MainActivity extends AppCompatActivity {
                 new Thread(() -> sendWOLPacket(mac)).start();
             }
         }
-        responseTextView.append("\n");
         scrollResp();
     }
 
