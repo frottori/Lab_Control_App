@@ -114,6 +114,12 @@ public class MainActivity extends AppCompatActivity {
                         else if (command.equals("Restart") && response.contains("Rebooting...")) {
                             online_computers[j] = true;
                         }
+                        else if (response.isEmpty() || response.toLowerCase().contains("error")){
+                            if (os_computers[j].equals("Unknown OS")) {
+                                os_computers[j] = "Unknown OS";
+                            }
+                            online_computers[j] = false;
+                        }
                     });
                     scrollResp();
                 }).start();
