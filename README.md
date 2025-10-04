@@ -1,4 +1,4 @@
-# Android_Studio_Project
+# Lab_Control_App
 ## Εργασία Εξαμήνου
 
 ### Lab Control
